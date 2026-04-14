@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Price Card Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1a2e;--panel:#16213e;--accent:#e94560;--accent2:#f5a623;--text:#eaeaea;--muted:#8892a4;--border:#2a3a5c;--card-bg:#0f3460}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow:hidden}
+#controls{width:320px;min-width:320px;height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:16px}
+#controls h1{font-family:"Bebas Neue",sans-serif;font-size:1.7rem;color:var(--accent);letter-spacing:3px;border-bottom:2px solid var(--accent);padding-bottom:8px}
+.sec{font-family:"Oswald",sans-serif;font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tbtn{background:var(--card-bg);border:2px solid var(--border);border-radius:10px;padding:8px 4px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tbtn .th{width:70px;height:70px;border-radius:50%;overflow:hidden}
+.tbtn .th svg{width:70px;height:70px}
+.tbtn span{font-size:.6rem;color:var(--muted);font-family:"Oswald",sans-serif;letter-spacing:1px}
+.tbtn:hover{border-color:var(--accent2);transform:scale(1.03)}
+.tbtn.on{border-color:var(--accent);background:#1e2d50}
+.tbtn.on span{color:var(--accent)}
+.slots{display:flex;flex-direction:column;gap:9px}
+.slot{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:11px}
+.shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.slbl{font-family:"Oswald",sans-serif;font-size:.75rem;letter-spacing:2px;color:var(--accent2)}
+.stog{display:flex;align-items:center;gap:5px;cursor:pointer}
+.stog input{width:14px;height:14px;accent-color:var(--accent)}
+.stog span{font-size:.63rem;color:var(--muted)}
+.sflds{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sflds.off{opacity:.3;pointer-events:none}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:.57rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.fld input{background:#0a1929;border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:.82rem;padding:5px 8px;width:100%;transition:border-color .2s}
+.fld input:focus{outline:none;border-color:var(--accent)}
+.brow{display:flex;gap:8px}
+.btn{flex:1;padding:11px;border:none;border-radius:8px;font-family:"Oswald",sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s}
+.bp{background:var(--accent);color:#fff}.bp:hover{background:#c73651;transform:translateY(-1px)}
+.bs{background:var(--border);color:var(--text)}.bs:hover{background:#3a4a6c}
+#pp{flex:1;height:100vh;overflow:auto;background:#111827;display:flex;flex-direction:column;align-items:center;padding:20px;gap:14px}
+#pp h2{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--muted);align-self:flex-start}
+
+/* ── A4スケールラッパー: 画面幅に合わせて自動縮小 ── */
+#a4-wrap{
+/* A4実寸(794px≒210mm@96dpi)を基準にscale */
+width:794px;
+transform-origin:top center;
+/* JSでscaleをセット */
+}
+
+/* ── 画面プレビュー ── */
+#a4{background:white;width:210mm;height:297mm;padding:8mm;
+display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);
+gap:4mm;box-shadow:0 20px 60px rgba(0,0,0,.6);overflow:hidden}
+/* セルをSVGのアスペクト比(1:1)に合わせて中央配置 */
+.pc{display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* SVGはセルの短辺に合わせてfit、引き伸ばしなし */
+.pc svg{width:auto;height:100%;max-width:100%;max-height:100%;display:block;aspect-ratio:1/1}
+.pce{background:#f5f5f5;border:2px dashed #ddd;display:flex;align-items:center;justify-content:center;border-radius:4px}
+.pce span{font-family:“Oswald”,sans-serif;font-size:.7rem;color:#ccc;letter-spacing:2px;text-align:center}
+
+/* ── 印刷専用(画面では非表示) ── */
+#a4-print{display:none}
+
+@media print{
+body{background:white;overflow:visible;display:block}
+#controls{display:none!important}
+#pp{display:none!important}
+#a4-print{
+display:grid!important;
+width:210mm;height:297mm;padding:8mm;
+grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);
+gap:4mm;background:white;
+position:fixed;top:0;left:0;
+print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+/* 印刷セル: border-radius不使用、SVG内マスクに完全依存 */
+.pc-print{
+display:flex;align-items:center;justify-content:center;
+print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+.pc-print svg{
+width:auto;height:100%;max-width:100%;max-height:100%;
+display:block;aspect-ratio:1/1;
+print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+.pce-print{background:#f5f5f5;border:2px dashed #ddd;
+display:flex;align-items:center;justify-content:center}
+@page{size:A4 portrait;margin:0}
+}
+</style>
+
+</head>
+<body>
+<div id="controls">
+  <h1>Price Card<br>Generator</h1>
+  <div><div class="sec">Select Template</div><div class="tgrid" id="tgrid"></div></div>
+  <div><div class="sec">Card Settings (Max 6)</div><div class="slots" id="slots"></div></div>
+  <div class="brow">
+    <button class="btn bs" onclick="resetAll()">RESET</button>
+    <button class="btn bp" onclick="window.print()">&#128438; PRINT</button>
+  </div>
+</div>
+<div id="pp">
+  <h2>A4 PREVIEW &#8212; 2 &times; 3</h2>
+  <div id="a4-wrap">
+    <div id="a4"></div>
+  </div>
+</div>
+<div id="a4-print"></div>
+
+<script>
+const TNAMES=["TYPE A","TYPE B","TYPE C"];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  重要: viewBox="0 0 540 540"  中心(270,270)
+//  外枠r=242 → 余裕28px → クリップされない
+//
+//  印刷対応の核心:
+//  SVG先頭に <rect width="540" height="540" fill="white"/>
+//  を置き、その上に全要素を <g clip-path="url(#outerMask)">
+//  で囲む。outerMask は外枠円(r=242)。
+//  これにより border-radius に頼らず SVG 自身が
+//  完全な円形クリップを持つ → 印刷エンジンに依存しない。
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// TYPE A: SPECIAL OFFER / Navy
+function svgA(proper,sale,expiry){
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAspectRatio="xMidYMid meet">
+<defs>
+  <clipPath id="outerA"><circle cx="270" cy="270" r="240"/></clipPath>
+  <clipPath id="innerA"><circle cx="270" cy="270" r="222"/></clipPath>
+  <radialGradient id="bgA" cx="42%" cy="38%" r="60%">
+    <stop offset="0%" stop-color="#2a3f6f"/>
+    <stop offset="100%" stop-color="#0d1f3c"/>
+  </radialGradient>
+  <radialGradient id="glowA" cx="50%" cy="45%" r="50%">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="txgA" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="4" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<!-- 白背景(印刷時の透過防止) -->
+<rect width="540" height="540" fill="white"/>
+<!-- 全要素を外枠円でクリップ -->
+<g clip-path="url(#outerA)">
+  <circle cx="276" cy="278" r="228" fill="#00000055"/>
+  <circle cx="270" cy="270" r="240" fill="#c0704a"/>
+  <circle cx="270" cy="270" r="235" fill="#e8915e" opacity="0.45"/>
+  <circle cx="270" cy="270" r="222" fill="#1a2e58"/>
+  <circle cx="270" cy="270" r="222" fill="url(#bgA)"/>
+  <circle cx="270" cy="270" r="222" fill="url(#glowA)"/>
+  <circle cx="270" cy="270" r="214" fill="none" stroke="#c0704a" stroke-width="1.5" opacity="0.55"/>
+  <circle cx="270" cy="270" r="204" fill="none" stroke="#c0704a" stroke-width="0.7" opacity="0.30"/>
+  <g stroke="#c0704a" stroke-width="1.2" fill="none" opacity="0.65">
+    <path d="M132 328Q222 240 270 270Q320 298 410 220"/>
+    <path d="M142 348Q232 250 270 280Q315 308 400 240"/>
+    <path d="M122 313Q217 230 270 260Q325 288 420 205"/>
+  </g>
+  <g fill="#c0704a" opacity="0.75">
+    <rect x="100" y="268" width="9" height="9" transform="rotate(45 104 272)"/>
+    <rect x="428" y="268" width="9" height="9" transform="rotate(45 432 272)"/>
+    <rect x="266" y="202" width="7" height="7" transform="rotate(45 269 205)"/>
+    <rect x="266" y="328" width="7" height="7" transform="rotate(45 269 331)"/>
+  </g>
+  <g fill="#c0704a" opacity="0.55">
+    <circle cx="170" cy="272" r="2.5"/><circle cx="370" cy="272" r="2.5"/>
+  </g>
+  <path id="arcA" d="M98,270 A172,172 0 0,1 442,270" fill="none"/>
+  <text font-family="Arial Black,sans-serif" font-weight="900" font-size="43" fill="white" letter-spacing="2">
+    <textPath href="#arcA" startOffset="50%" text-anchor="middle">SPECIAL OFFER</textPath>
+  </text>
+  <text x="270" y="228" font-family="Arial,sans-serif" font-weight="700"
+        font-size="57" fill="rgba(255,255,255,0.85)" text-anchor="middle">${proper}</text>
+  <line x1="160" y1="215" x2="380" y2="204" stroke="#c0704a" stroke-width="3.5"/>
+  <text x="270" y="358" font-family="Arial Black,sans-serif" font-weight="900"
+        font-size="142" fill="white" text-anchor="middle" filter="url(#txgA)">${sale}</text>
+  <!-- Best Before pill (innerクリップで円内に収める) -->
+  <g clip-path="url(#innerA)">
+    <rect x="108" y="426" width="324" height="38" rx="19" ry="19" fill="#0d1f3c" stroke="#c0704a" stroke-width="2"/>
+    <text x="150" y="451" font-family="Arial,sans-serif" font-size="21" fill="white">
+      <tspan font-weight="400">Best Before: </tspan><tspan font-weight="700">${expiry}</tspan>
+    </text>
+  </g>
+</g>
+</svg>`;}
+
+// TYPE B: CLEARANCE SALE / Red
+function svgB(proper,sale,expiry){
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAspectRatio="xMidYMid meet">
+<defs>
+  <clipPath id="outerB"><circle cx="270" cy="270" r="240"/></clipPath>
+  <clipPath id="innerB"><circle cx="270" cy="270" r="218"/></clipPath>
+  <radialGradient id="bgB" cx="40%" cy="28%" r="65%">
+    <stop offset="0%" stop-color="#e83030"/>
+    <stop offset="55%" stop-color="#c0141f"/>
+    <stop offset="100%" stop-color="#8b0000"/>
+  </radialGradient>
+  <radialGradient id="shineB" cx="38%" cy="22%" r="52%">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.28"/>
+    <stop offset="65%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="540" height="540" fill="white"/>
+<g clip-path="url(#outerB)">
+  <!-- shadow -->
+  <circle cx="275" cy="278" r="234" fill="#00000044"/>
+  <!-- 外枠赤リング: 全てouterBクリップ内 -->
+  <circle cx="270" cy="270" r="240" fill="#3a0000"/>
+  <circle cx="270" cy="270" r="235" fill="#6b0000"/>
+  <circle cx="270" cy="270" r="230" fill="#aa0000"/>
+  <circle cx="270" cy="270" r="225" fill="#cc1a1a"/>
+  <circle cx="270" cy="270" r="221" fill="#e03030"/>
+  <circle cx="270" cy="270" r="218" fill="#ffffff"/>
+  <circle cx="270" cy="270" r="216" fill="#dd2020"/>
+  <!-- メイン赤 solid + gradient -->
+  <circle cx="270" cy="270" r="218" fill="#c0141f"/>
+  <circle cx="270" cy="270" r="218" fill="url(#bgB)"/>
+  <circle cx="270" cy="270" r="218" fill="url(#shineB)"/>
+  <!-- コンテンツ全体をinnerBでクリップ -->
+  <g clip-path="url(#innerB)">
+    <!-- CLEARANCE -->
+    <text x="270" y="125" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="46" fill="white" text-anchor="middle" letter-spacing="3"
+          stroke="#6b0000" stroke-width="2" paint-order="stroke">CLEARANCE</text>
+    <!-- SALE -->
+    <text x="270" y="230" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="110" fill="white" text-anchor="middle" letter-spacing="-2">SALE</text>
+    <!-- orange band -->
+    <rect x="44" y="238" width="452" height="82" fill="#e05a30"/>
+    <text x="270" y="296" font-family="Arial,sans-serif" font-weight="700"
+          font-size="60" fill="white" text-anchor="middle">${proper}</text>
+    <line x1="125" y1="282" x2="415" y2="271" stroke="white" stroke-width="3" opacity="0.85"/>
+    <!-- white band -->
+    <rect x="44" y="320" width="452" height="120" fill="white"/>
+    <text x="270" y="418" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="105" fill="#cc1a1a" text-anchor="middle">${sale}</text>
+    <!-- green band -->
+    <rect x="44" y="438" width="452" height="64" fill="#1a8c2e"/>
+    <text x="270" y="480" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="32" fill="white" text-anchor="middle" letter-spacing="1">EXP. ${expiry}</text>
+  </g>
+</g>
+</svg>`;}
+
+// TYPE C: CLEARANCE / Yellow
+function svgC(proper,sale,expiry){
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAspectRatio="xMidYMid meet">
+<defs>
+  <clipPath id="outerC"><circle cx="270" cy="270" r="240"/></clipPath>
+  <clipPath id="innerC"><circle cx="270" cy="270" r="222"/></clipPath>
+  <radialGradient id="bgC" cx="45%" cy="35%" r="60%">
+    <stop offset="0%" stop-color="#ffe84d"/>
+    <stop offset="65%" stop-color="#f5c800"/>
+    <stop offset="100%" stop-color="#c8a000"/>
+  </radialGradient>
+  <radialGradient id="shineC" cx="40%" cy="22%" r="48%">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.42"/>
+    <stop offset="70%" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="540" height="540" fill="white"/>
+<g clip-path="url(#outerC)">
+  <!-- shadow -->
+  <circle cx="274" cy="277" r="234" fill="#00000030"/>
+  <!-- 外枠赤リング -->
+  <circle cx="270" cy="270" r="240" fill="#5a0000"/>
+  <circle cx="270" cy="270" r="235" fill="#8b0000"/>
+  <circle cx="270" cy="270" r="229" fill="#bb1010"/>
+  <circle cx="270" cy="270" r="224" fill="#cc1a1a"/>
+  <circle cx="270" cy="270" r="222" fill="#e03030"/>
+  <!-- 黄色 solid fallback + gradient -->
+  <circle cx="270" cy="270" r="222" fill="#f5c800"/>
+  <circle cx="270" cy="270" r="222" fill="url(#bgC)"/>
+  <circle cx="270" cy="270" r="222" fill="url(#shineC)"/>
+  <!-- コンテンツ全体をinnerCでクリップ -->
+  <g clip-path="url(#innerC)">
+    <!-- 赤帯 上部 -->
+    <rect x="44" y="44" width="452" height="118" fill="#cc1a1a"/>
+    <!-- CLEARANCE arc -->
+    <path id="arcC" d="M86,270 A184,184 0 0,1 454,270" fill="none"/>
+    <text font-family="Arial Black,sans-serif" font-weight="900" font-size="43" fill="white" letter-spacing="3">
+      <textPath href="#arcC" startOffset="50%" text-anchor="middle">CLEARANCE</textPath>
+    </text>
+    <!-- SALE!!! ピル -->
+    <ellipse cx="270" cy="198" rx="145" ry="48" fill="#cc1a1a"/>
+    <text x="270" y="214" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="46" fill="white" text-anchor="middle" letter-spacing="-1">SALE!!!</text>
+    <!-- proper -->
+    <text x="270" y="268" font-family="Arial,sans-serif" font-weight="700"
+          font-size="54" fill="#222" text-anchor="middle">${proper}</text>
+    <line x1="145" y1="252" x2="395" y2="242" stroke="#222" stroke-width="3"/>
+    <!-- sale 中央 -->
+    <text x="270" y="382" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="140" fill="white" text-anchor="middle"
+          stroke="#cc1a1a" stroke-width="8" paint-order="stroke">${sale}</text>
+    <!-- 緑帯 EXP -->
+    <rect x="44" y="398" width="452" height="130" fill="#1a8c2e"/>
+    <text x="270" y="478" font-family="Arial Black,sans-serif" font-weight="900"
+          font-size="36" fill="white" text-anchor="middle" letter-spacing="2">EXP. ${expiry}</text>
+  </g>
+</g>
+</svg>`;}
+
+const SVGT=[svgA,svgB,svgC];
+const THUMBS=[
+  svgA("฿350","฿225","22APR"),
+  svgB("฿299","฿199","15APR"),
+  svgC("฿399","฿249","18APR")
+];
+
+let sel=0;
+const dflt=()=>({on:true,proper:"",sale:"",expiry:""});
+let cards=Array.from({length:6},dflt);
+
+function fmtDate(ds){
+  if(!ds)return"";
+  const[y,m,d]=ds.split("-");
+  const mn=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  return d+mn[parseInt(m)-1];
+}
+
+function buildTG(){
+  const g=document.getElementById("tgrid");
+  g.innerHTML="";
+  THUMBS.forEach((svg,i)=>{
+    const b=document.createElement("button");
+    b.className="tbtn"+(i===sel?" on":"");
+    b.innerHTML=`<div class="th">${svg}</div><span>${TNAMES[i]}</span>`;
+    b.onclick=()=>{sel=i;buildTG();render();};
+    g.appendChild(b);
+  });
+}
+
+function buildSlots(){
+  const c=document.getElementById("slots");
+  c.innerHTML="";
+  cards.forEach((card,i)=>{
+    const d=document.createElement("div");
+    d.className="slot";
+    d.innerHTML=`
+      <div class="shdr">
+        <span class="slbl">CARD ${i+1}</span>
+        <label class="stog">
+          <input type="checkbox" ${card.on?"checked":""} onchange="tog(${i},this.checked)">
+          <span>Enable</span>
+        </label>
+      </div>
+      <div class="sflds ${card.on?"":"off"}" id="f${i}">
+        <div class="fld"><label>Regular &#3647;</label>
+          <input type="number" min="0" value="${card.proper}"
+            oninput="upd(${i},'proper',this.value)" placeholder="350"></div>
+        <div class="fld"><label>Sale &#3647;</label>
+          <input type="number" min="0" value="${card.sale}"
+            oninput="upd(${i},'sale',this.value)" placeholder="225"></div>
+        <div class="fld full"><label>Expiry (DD MMM)</label>
+          <input type="date" value="${card.expiry}"
+            oninput="upd(${i},'expiry',this.value)"></div>
+      </div>`;
+    c.appendChild(d);
+  });
+}
+
+function tog(i,v){cards[i].on=v;document.getElementById("f"+i).className="sflds"+(v?"":" off");render();}
+function upd(i,k,v){cards[i][k]=v;render();}
+
+function makeCell(card,i,forPrint){
+  const cell=document.createElement("div");
+  if(!card.on){
+    cell.className=forPrint?"pce-print":"pce";
+    cell.innerHTML=`<span>CARD ${i+1}<br>DISABLED</span>`;
+  } else {
+    cell.className=forPrint?"pc-print":"pc";
+    const proper=card.proper?"&#3647;"+Number(card.proper).toLocaleString():"";
+    const sale=card.sale?"&#3647;"+Number(card.sale).toLocaleString():"&#3647;&#8212;";
+    const expiry=fmtDate(card.expiry);
+    cell.innerHTML=SVGT[sel](proper,sale,expiry);
+  }
+  return cell;
+}
+
+function render(){
+  const a4=document.getElementById("a4");
+  a4.innerHTML="";
+  const a4p=document.getElementById("a4-print");
+  a4p.innerHTML="";
+  cards.forEach((card,i)=>{
+    a4.appendChild(makeCell(card,i,false));
+    a4p.appendChild(makeCell(card,i,true));
+  });
+}
+
+function resetAll(){cards=Array.from({length:6},dflt);buildSlots();render();}
+
+// A4プレビューを画面幅に合わせてスケール
+function scaleA4(){
+  const wrap=document.getElementById('a4-wrap');
+  const pp=document.getElementById('pp');
+  if(!wrap||!pp)return;
+  const a4W=794; // 210mm @ 96dpi
+  const avail=pp.clientWidth-40; // padding 20px x2
+  const scale=Math.min(1, avail/a4W);
+  wrap.style.transform=`scale(${scale})`;
+  wrap.style.transformOrigin='top center';
+  // scaleで縮小した分、実際の占有高さも縮む → marginで詰める
+  const a4H=1123; // 297mm @ 96dpi
+  wrap.style.marginBottom=`${(a4H*(scale-1))}px`;
+}
+
+buildTG();buildSlots();render();
+scaleA4();
+window.addEventListener('resize',scaleA4);
+</script>
+
+</body>
+</html>
