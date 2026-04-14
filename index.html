@@ -229,19 +229,21 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
     <text x="270" y="220" font-family="Arial Black,sans-serif" font-weight="900"
           font-size="110" fill="white" text-anchor="middle" letter-spacing="-2">SALE</text>
     <!-- orange band -->
-    <rect x="44" y="232" width="452" height="82" fill="#e05a30"/>
+    <rect x="0" y="232" width="540" height="82" fill="#e05a30"/>
     <text x="270" y="290" font-family="Arial,sans-serif" font-weight="700"
           font-size="60" fill="white" text-anchor="middle">${proper}</text>
     <line x1="125" y1="276" x2="415" y2="265" stroke="white" stroke-width="3" opacity="0.85"/>
     <!-- white band -->
-    <rect x="44" y="314" width="452" height="118" fill="white"/>
+    <rect x="0" y="314" width="540" height="118" fill="white"/>
     <text x="270" y="410" font-family="Arial Black,sans-serif" font-weight="900"
           font-size="105" fill="#cc1a1a" text-anchor="middle">${sale}</text>
     <!-- green band: EXPテキストy=458に上げて円内に収める -->
-    <rect x="44" y="428" width="452" height="80" fill="#1a8c2e"/>
+    <rect x="0" y="428" width="540" height="112" fill="#1a8c2e"/>
     <text x="270" y="458" font-family="Arial Black,sans-serif" font-weight="900"
           font-size="32" fill="white" text-anchor="middle" letter-spacing="1">EXP. ${expiry}</text>
   </g>
+  <circle cx="270" cy="270" r="230" fill="none" stroke="#aa0000" stroke-width="24"/>
+<circle cx="270" cy="270" r="219" fill="none" stroke="white" stroke-width="3"/>
   <text x="270" y="125" font-family="Arial Black,sans-serif" font-weight="900"
         font-size="44" fill="white" text-anchor="middle" letter-spacing="3"
         stroke="#6b0000" stroke-width="2" paint-order="stroke">CLEARANCE</text>
