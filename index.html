@@ -54,7 +54,7 @@ body{font-family:"Noto Sans JP",sans-serif;background:var(--bg);color:var(--text
   
   #a4-print{
     display:grid!important;
-    width:210mm;height:297mm;padding:3mm 8mm 13mm 8mm;
+    width:210mm;height:297mm;padding:1mm 8mm 15mm 8mm;
     grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);
     gap:4mm;background:white;
     position:fixed;top:0;left:0;
@@ -252,7 +252,7 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
 <text x="270" y="232" font-family="Arial,sans-serif" font-weight="700" font-size="54" fill="#222" text-anchor="middle">${proper}</text>
 <line x1="145" y1="216" x2="395" y2="206" stroke="#222" stroke-width="3"/>
 <text x="270" y="355" font-family="Arial Black,sans-serif" font-weight="900" font-size="140" fill="white" text-anchor="middle" stroke="#cc1a1a" stroke-width="8" paint-order="stroke">${sale}</text>
-<text x="270" y="438" font-family="Arial Black,sans-serif" font-weight="900" font-size="34" fill="white" text-anchor="middle" letter-spacing="2">EXP. ${expiry}</text>
+<text x="270" y="438" font-family="Arial Black,sans-serif" font-weight="900" font-size="35" fill="white" text-anchor="middle" letter-spacing="2">EXP. ${expiry}</text>
 
 ${MASK}
 </svg>`;}
