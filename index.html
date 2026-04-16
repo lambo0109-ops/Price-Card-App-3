@@ -128,15 +128,13 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
 </defs>
-<!-- 1. 白背景 -->
 <rect width="540" height="540" fill="white"/>
-<!-- 2. 全デザイン要素 -->
+
 <circle cx="276" cy="278" r="228" fill="#00000055"/>
-<circle cx="270" cy="270" r="240" fill="#c0704a"/>
-<circle cx="270" cy="270" r="235" fill="#e8915e" opacity="0.45"/>
 <circle cx="270" cy="270" r="222" fill="#1a2e58"/>
 <circle cx="270" cy="270" r="222" fill="url(#bgA)"/>
 <circle cx="270" cy="270" r="222" fill="url(#glowA)"/>
+
 <circle cx="270" cy="270" r="214" fill="none" stroke="#c0704a" stroke-width="1.5" opacity="0.55"/>
 <circle cx="270" cy="270" r="204" fill="none" stroke="#c0704a" stroke-width="0.7" opacity="0.30"/>
 <g stroke="#c0704a" stroke-width="1.2" fill="none" opacity="0.65">
@@ -153,22 +151,25 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
 <g fill="#c0704a" opacity="0.55">
   <circle cx="170" cy="272" r="2.5"/><circle cx="370" cy="272" r="2.5"/>
 </g>
+
 <path id="arcA" d="M98,270 A172,172 0 0,1 442,270" fill="none"/>
 <text font-family="Arial Black,sans-serif" font-weight="900" font-size="43" fill="white" letter-spacing="2">
   <textPath href="#arcA" startOffset="50%" text-anchor="middle">SPECIAL OFFER</textPath>
 </text>
-<text x="270" y="228" font-family="Arial,sans-serif" font-weight="700"
-      font-size="57" fill="rgba(255,255,255,0.85)" text-anchor="middle">${proper}</text>
+<text x="270" y="228" font-family="Arial,sans-serif" font-weight="700" font-size="57" fill="rgba(255,255,255,0.85)" text-anchor="middle">${proper}</text>
 <line x1="160" y1="215" x2="380" y2="204" stroke="#c0704a" stroke-width="3.5"/>
-<text x="270" y="358" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="142" fill="white" text-anchor="middle" filter="url(#txgA)">${sale}</text>
+<text x="270" y="358" font-family="Arial Black,sans-serif" font-weight="900" font-size="142" fill="white" text-anchor="middle" filter="url(#txgA)">${sale}</text>
+
 <g clip-path="url(#innerA)">
   <rect x="120" y="426" width="300" height="38" rx="19" ry="19" fill="#0d1f3c" stroke="#c0704a" stroke-width="2"/>
   <text x="175" y="451" font-family="Arial,sans-serif" font-size="21" fill="white">
     <tspan font-weight="400">Best Before: </tspan><tspan font-weight="700">${expiry}</tspan>
   </text>
 </g>
-<!-- 3. evenodd白マスク: 円の外を白で覆う -->
+
+<circle cx="270" cy="270" r="231" fill="none" stroke="#c0704a" stroke-width="18"/>
+<circle cx="270" cy="270" r="228.5" fill="none" stroke="#e8915e" stroke-width="13" opacity="0.45"/>
+
 ${MASK}
 </svg>`;}
 
@@ -185,45 +186,31 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
     <stop offset="0%" stop-color="#fff" stop-opacity="0.28"/>
     <stop offset="65%" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
-  <clipPath id="innerB"><circle cx="270" cy="270" r="218"/></clipPath>
 </defs>
-<!-- 1. 白背景 -->
 <rect width="540" height="540" fill="white"/>
-<!-- 2. 全デザイン要素 -->
-<!-- shadow -->
+
 <circle cx="275" cy="278" r="234" fill="#00000044"/>
-<!-- 外枠赤リング -->
-<circle cx="270" cy="270" r="240" fill="#3a0000"/>
-<circle cx="270" cy="270" r="235" fill="#6b0000"/>
-<circle cx="270" cy="270" r="230" fill="#aa0000"/>
-<circle cx="270" cy="270" r="225" fill="#cc1a1a"/>
-<circle cx="270" cy="270" r="221" fill="#e03030"/>
-<circle cx="270" cy="270" r="218" fill="#ffffff"/>
-<circle cx="270" cy="270" r="216" fill="#dd2020"/>
-<!-- メイン赤 -->
 <circle cx="270" cy="270" r="218" fill="#c0141f"/>
 <circle cx="270" cy="270" r="218" fill="url(#bgB)"/>
 <circle cx="270" cy="270" r="218" fill="url(#shineB)"/>
-<!-- コンテンツ: innerBクリップで帯をクリップ -->
-<g clip-path="url(#innerB)">
-  <rect x="44" y="232" width="452" height="82" fill="#e05a30"/>
-  <rect x="44" y="314" width="452" height="118" fill="white"/>
-  <rect x="44" y="428" width="452" height="80" fill="#1a8c2e"/>
-</g>
-<!-- テキスト類はclipなしで描画(evenoddマスクが最終的に円外を隠す) -->
-<text x="270" y="125" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="44" fill="white" text-anchor="middle" letter-spacing="3"
-      stroke="#6b0000" stroke-width="2" paint-order="stroke">CLEARANCE</text>
-<text x="270" y="225" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="110" fill="white" text-anchor="middle" letter-spacing="-2">SALE</text>
-<text x="270" y="290" font-family="Arial,sans-serif" font-weight="700"
-      font-size="60" fill="white" text-anchor="middle">${proper}</text>
+
+<rect x="0" y="232" width="540" height="82" fill="#e05a30"/>
+<rect x="0" y="314" width="540" height="118" fill="white"/>
+<rect x="0" y="428" width="540" height="80" fill="#1a8c2e"/>
+
+<circle cx="270" cy="270" r="229" stroke="#3a0000" stroke-width="22" fill="none"/>
+<circle cx="270" cy="270" r="226.5" stroke="#6b0000" stroke-width="17" fill="none"/>
+<circle cx="270" cy="270" r="224" stroke="#aa0000" stroke-width="12" fill="none"/>
+<circle cx="270" cy="270" r="221.5" stroke="#cc1a1a" stroke-width="7" fill="none"/>
+<circle cx="270" cy="270" r="219.5" stroke="#e03030" stroke-width="3" fill="none"/>
+
+<text x="270" y="125" font-family="Arial Black,sans-serif" font-weight="900" font-size="44" fill="white" text-anchor="middle" letter-spacing="3" stroke="#6b0000" stroke-width="2" paint-order="stroke">CLEARANCE</text>
+<text x="270" y="225" font-family="Arial Black,sans-serif" font-weight="900" font-size="110" fill="white" text-anchor="middle" letter-spacing="-2">SALE</text>
+<text x="270" y="290" font-family="Arial,sans-serif" font-weight="700" font-size="60" fill="white" text-anchor="middle">${proper}</text>
 <line x1="125" y1="276" x2="415" y2="265" stroke="white" stroke-width="3" opacity="0.85"/>
-<text x="270" y="410" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="105" fill="#cc1a1a" text-anchor="middle">${sale}</text>
-<text x="270" y="458" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="30" fill="white" text-anchor="middle" letter-spacing="1">EXP. ${expiry}</text>
-<!-- 3. evenodd白マスク -->
+<text x="270" y="410" font-family="Arial Black,sans-serif" font-weight="900" font-size="105" fill="#cc1a1a" text-anchor="middle">${sale}</text>
+<text x="270" y="458" font-family="Arial Black,sans-serif" font-weight="900" font-size="30" fill="white" text-anchor="middle" letter-spacing="1">EXP. ${expiry}</text>
+
 ${MASK}
 </svg>`;}
 
@@ -240,48 +227,33 @@ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 540" preserveAs
     <stop offset="0%" stop-color="#fff" stop-opacity="0.42"/>
     <stop offset="70%" stop-color="#fff" stop-opacity="0"/>
   </radialGradient>
-  <clipPath id="innerC"><circle cx="270" cy="270" r="222"/></clipPath>
 </defs>
-<!-- 1. 白背景 -->
 <rect width="540" height="540" fill="white"/>
-<!-- 2. 全デザイン要素 -->
+
 <circle cx="274" cy="277" r="234" fill="#00000030"/>
-<!-- 外枠赤リング -->
-<circle cx="270" cy="270" r="240" fill="#5a0000"/>
-<circle cx="270" cy="270" r="235" fill="#8b0000"/>
-<circle cx="270" cy="270" r="229" fill="#bb1010"/>
-<circle cx="270" cy="270" r="224" fill="#cc1a1a"/>
-<circle cx="270" cy="270" r="222" fill="#e03030"/>
-<!-- 黄色 -->
 <circle cx="270" cy="270" r="222" fill="#f5c800"/>
 <circle cx="270" cy="270" r="222" fill="url(#bgC)"/>
 <circle cx="270" cy="270" r="222" fill="url(#shineC)"/>
-<!-- 帯はinnerCでクリップ -->
-<g clip-path="url(#innerC)">
-  <rect x="44" y="44" width="452" height="110" fill="#cc1a1a"/>
-  <rect x="44" y="385" width="452" height="145" fill="#1a8c2e"/>
-</g>
-<!-- CLEARANCE arc -->
+
+<rect x="0" y="44" width="540" height="110" fill="#cc1a1a"/>
+<rect x="0" y="385" width="540" height="145" fill="#1a8c2e"/>
+
+<circle cx="270" cy="270" r="231" stroke="#5a0000" stroke-width="18" fill="none"/>
+<circle cx="270" cy="270" r="228.5" stroke="#8b0000" stroke-width="13" fill="none"/>
+<circle cx="270" cy="270" r="225.5" stroke="#bb1010" stroke-width="7" fill="none"/>
+<circle cx="270" cy="270" r="223" stroke="#cc1a1a" stroke-width="2" fill="none"/>
+
 <path id="arcC" d="M86,270 A184,184 0 0,1 454,270" fill="none"/>
 <text font-family="Arial Black,sans-serif" font-weight="900" font-size="43" fill="white" letter-spacing="3">
   <textPath href="#arcC" startOffset="50%" text-anchor="middle">CLEARANCE</textPath>
 </text>
-<!-- SALE!!! ピル -->
 <ellipse cx="270" cy="165" rx="145" ry="46" fill="#cc1a1a"/>
-<text x="270" y="175" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="46" fill="white" text-anchor="middle" letter-spacing="-1">SALE!!!</text>
-<!-- proper -->
-<text x="270" y="232" font-family="Arial,sans-serif" font-weight="700"
-      font-size="54" fill="#222" text-anchor="middle">${proper}</text>
+<text x="270" y="175" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" fill="white" text-anchor="middle" letter-spacing="-1">SALE!!!</text>
+<text x="270" y="232" font-family="Arial,sans-serif" font-weight="700" font-size="54" fill="#222" text-anchor="middle">${proper}</text>
 <line x1="145" y1="216" x2="395" y2="206" stroke="#222" stroke-width="3"/>
-<!-- sale -->
-<text x="270" y="355" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="140" fill="white" text-anchor="middle"
-      stroke="#cc1a1a" stroke-width="8" paint-order="stroke">${sale}</text>
-<!-- EXP -->
-<text x="270" y="438" font-family="Arial Black,sans-serif" font-weight="900"
-      font-size="34" fill="white" text-anchor="middle" letter-spacing="2">EXP. ${expiry}</text>
-<!-- 3. evenodd白マスク -->
+<text x="270" y="355" font-family="Arial Black,sans-serif" font-weight="900" font-size="140" fill="white" text-anchor="middle" stroke="#cc1a1a" stroke-width="8" paint-order="stroke">${sale}</text>
+<text x="270" y="438" font-family="Arial Black,sans-serif" font-weight="900" font-size="34" fill="white" text-anchor="middle" letter-spacing="2">EXP. ${expiry}</text>
+
 ${MASK}
 </svg>`;}
 
